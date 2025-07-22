@@ -1,5 +1,7 @@
 import asyncio
+from dataclasses import dataclass
 from pyodide import create_proxy
+from pyodide.ffi import to_py
 from js import (
     document,
     performance,
@@ -10,6 +12,39 @@ from js import (
     fetch,
     createImageBitmap,
 )
+
+
+@dataclass
+class PointerState:
+    """Stores the current pointer position and click state."""
+
+    x: float = 0.0
+    y: float = 0.0
+    down: bool = False
+    up: bool = False
+
+
+pointer_state = PointerState()
+
+quad_renderer: "QuadRenderer | None" = None
+
+
+def handle_pointer_down(x: float, y: float) -> None:
+    """Process a pointer-down event at canvas coordinates ``(x, y)``."""
+
+    pointer_state.x = x
+    pointer_state.y = y
+    pointer_state.down = True
+    pointer_state.up = False
+
+    canvas = document.getElementById("game")
+    if not canvas or quad_renderer is None:
+        return
+
+    # Convert pixel coordinates to WebGL NDC (-1..1) space
+    ndc_x = (x / canvas.width) * 2.0 - 1.0
+    ndc_y = -((y / canvas.height) * 2.0 - 1.0)
+    quad_renderer.hit_test(ndc_x, ndc_y)
 
 
 def init_webgl() -> WebGL2RenderingContext:
@@ -23,6 +58,18 @@ def init_webgl() -> WebGL2RenderingContext:
     gl.clearColor(0.0, 0.25, 0.3, 1.0)
     gl.viewport(0, 0, canvas.width, canvas.height)
     gl.clear(gl.COLOR_BUFFER_BIT)
+
+    def _on_pointer_down(evt) -> None:
+        e = to_py(evt)
+        handle_pointer_down(float(e.offsetX), float(e.offsetY))
+
+    def _on_pointer_up(evt) -> None:
+        e = to_py(evt)
+        pointer_state.down = False
+        pointer_state.up = True
+
+    canvas.addEventListener("pointerdown", create_proxy(_on_pointer_down))
+    canvas.addEventListener("pointerup", create_proxy(_on_pointer_up))
     return gl
 
 
@@ -38,6 +85,7 @@ class QuadRenderer:
 
     def __init__(self, gl: WebGL2RenderingContext) -> None:
         self.gl = gl
+        self.quads: list[tuple[str, float, float, float, float]] = []
         vs_source = """
             #version 300 es
             in vec2 a_pos;
@@ -115,6 +163,7 @@ class QuadRenderer:
 
     def draw_quad(
         self,
+        quad_id: str,
         x: float,
         y: float,
         w: float,
@@ -133,6 +182,21 @@ class QuadRenderer:
         gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4)
         gl.bindVertexArray(None)
         gl.useProgram(None)
+        self.quads.append((quad_id, x, y, w, h))
+
+    def clear_quads(self) -> None:
+        self.quads.clear()
+
+    def hit_test(self, x: float, y: float) -> None:
+        """Check if point ``(x, y)`` in NDC space hits any stored quad."""
+
+        for qid, qx, qy, qw, qh in self.quads:
+            if (
+                qx - qw / 2.0 <= x <= qx + qw / 2.0
+                and qy - qh / 2.0 <= y <= qy + qh / 2.0
+            ):
+                console.log(f"Clicked quad: ID={qid}")
+                return
 
 
 class SpriteRenderer:
@@ -285,15 +349,18 @@ class SpriteRenderer:
 def start_main_loop(
     gl: WebGL2RenderingContext, sprites: SpriteRenderer
 ) -> None:
+    global quad_renderer
     renderer = QuadRenderer(gl)
+    quad_renderer = renderer
     last_fps_time = performance.now()
     frame_count = 0
 
     def _step(timestamp: float) -> None:
         nonlocal last_fps_time, frame_count
         gl.clear(gl.COLOR_BUFFER_BIT)
-        renderer.draw_quad(-0.75, -0.75, 0.4, 0.4, 1.0, 0.0, 0.0, 1.0)
-        renderer.draw_quad(0.2, 0.2, 0.5, 0.3, 0.0, 1.0, 0.0, 1.0)
+        renderer.clear_quads()
+        renderer.draw_quad("red", -0.75, -0.75, 0.4, 0.4, 1.0, 0.0, 0.0, 1.0)
+        renderer.draw_quad("green", 0.2, 0.2, 0.5, 0.3, 0.0, 1.0, 0.0, 1.0)
         sprites.draw_sprite(-0.5, -0.5, 0.4, 0.4, 0.0, 0.0, 0.25, 0.25)
         sprites.draw_sprite(0.3, 0.3, 0.4, 0.4, 0.25, 0.0, 0.5, 0.25)
         frame_count += 1
