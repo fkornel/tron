@@ -11,6 +11,7 @@ from js import (
     requestAnimationFrame,
     fetch,
     createImageBitmap,
+    Image,
 )
 
 
@@ -27,6 +28,12 @@ class PointerState:
 pointer_state = PointerState()
 
 quad_renderer: "QuadRenderer | None" = None
+
+# Global UV mapping loaded from static/atlas.json
+atlas_uv: dict[str, list[float]] = {}
+
+# Shared texture handle for the sprite atlas
+atlas_texture = None
 
 
 def handle_pointer_down(x: float, y: float) -> None:
@@ -78,6 +85,13 @@ async def load_image_bitmap(url: str):
     blob = await resp.blob()
     bitmap = await createImageBitmap(blob)
     return bitmap
+
+
+async def load_atlas_data(url: str) -> dict[str, list[float]]:
+    """Fetch and parse the atlas JSON file."""
+    resp = await fetch(url)
+    data = await resp.json()
+    return to_py(data)
 
 
 class QuadRenderer:
@@ -275,23 +289,27 @@ class SpriteRenderer:
     async def create(
         cls, gl: WebGL2RenderingContext, url: str
     ) -> "SpriteRenderer":
-        bitmap = await load_image_bitmap(url)
-        texture = gl.createTexture()
-        gl.bindTexture(gl.TEXTURE_2D, texture)
-        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.NEAREST)
-        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.NEAREST)
-        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE)
-        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE)
-        gl.texImage2D(
-            gl.TEXTURE_2D,
-            0,
-            gl.RGBA,
-            gl.RGBA,
-            gl.UNSIGNED_BYTE,
-            bitmap,
-        )
-        gl.bindTexture(gl.TEXTURE_2D, None)
-        return cls(gl, texture)
+        global atlas_texture
+        if atlas_texture is None or not gl.isTexture(atlas_texture):
+            img = Image.new()
+            img.src = url
+            await img.decode()
+            atlas_texture = gl.createTexture()
+            gl.bindTexture(gl.TEXTURE_2D, atlas_texture)
+            gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.NEAREST)
+            gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.NEAREST)
+            gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE)
+            gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE)
+            gl.texImage2D(
+                gl.TEXTURE_2D,
+                0,
+                gl.RGBA,
+                gl.RGBA,
+                gl.UNSIGNED_BYTE,
+                img,
+            )
+            gl.bindTexture(gl.TEXTURE_2D, None)
+        return cls(gl, atlas_texture)
 
     def _compile_shader(self, src: str, shader_type: int):
         gl = self.gl
@@ -322,15 +340,16 @@ class SpriteRenderer:
 
     def draw_sprite(
         self,
+        name: str,
         x: float,
         y: float,
         w: float,
         h: float,
-        u0: float,
-        v0: float,
-        u1: float,
-        v1: float,
     ) -> None:
+        if name not in atlas_uv:
+            console.warn(f"UV for sprite '{name}' not found")
+            return
+        u0, v0, u1, v1 = atlas_uv[name]
         gl = self.gl
         gl.useProgram(self.program)
         gl.bindVertexArray(self.vao)
@@ -361,8 +380,9 @@ def start_main_loop(
         renderer.clear_quads()
         renderer.draw_quad("red", -0.75, -0.75, 0.4, 0.4, 1.0, 0.0, 0.0, 1.0)
         renderer.draw_quad("green", 0.2, 0.2, 0.5, 0.3, 0.0, 1.0, 0.0, 1.0)
-        sprites.draw_sprite(-0.5, -0.5, 0.4, 0.4, 0.0, 0.0, 0.25, 0.25)
-        sprites.draw_sprite(0.3, 0.3, 0.4, 0.4, 0.25, 0.0, 0.5, 0.25)
+        sprites.draw_sprite("sprite_0", -0.5, -0.5, 0.4, 0.4)
+        sprites.draw_sprite("sprite_3", 0.3, 0.3, 0.4, 0.4)
+        sprites.draw_sprite("sprite_7", 0.0, 0.0, 0.4, 0.4)
         frame_count += 1
         if timestamp - last_fps_time >= 1000:
             fps = frame_count * 1000.0 / (timestamp - last_fps_time)
@@ -377,6 +397,8 @@ def start_main_loop(
 
 async def main_loop() -> None:
     gl = init_webgl()
+    global atlas_uv
+    atlas_uv = await load_atlas_data("/static/atlas.json")
     sprites = await SpriteRenderer.create(gl, "/static/atlas.png")
     start_main_loop(gl, sprites)
     await asyncio.Future()  # Run forever
