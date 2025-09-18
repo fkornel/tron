@@ -69,6 +69,7 @@ Phase 3.3 — Core Implementation (after tests fail)
   - Action: Add build steps to produce `frontend/dist/` with `frontend_wasm.wasm` and `bootstrap.js`. For LLM execution: write a placeholder build script `/home/fkornel/dev/tron/frontend/build_frontend.sh` that documents commands to run inside the dev container to produce `dist/` (e.g., `wasm-pack build --target web --out-dir dist`), mark it executable.
   - Verify: `/home/fkornel/dev/tron/frontend/dist/` exists after running build steps in dev container.
   - Dependency: T002
+  - Status: completed
 
 - T023 Hook frontend image to serve built `dist/` via its Dockerfile
   - Action: Update `/home/fkornel/dev/tron/frontend/Dockerfile` to copy `dist/` into Nginx html directory; ensure build succeeds.
