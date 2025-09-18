@@ -23,13 +23,13 @@ Phase 1 — Setup
   - Description: `rustfmt.toml` exists and was left or adjusted; added `clippy.toml`; updated `Dockerfile` to install `rustfmt` and `clippy` components; updated CI workflow `/home/fkornel/dev/tron/.github/workflows/smoke.yml` to run `cargo fmt -- --check` and `cargo clippy -- -D warnings` inside the dev container. Ensure `cargo fmt` and `cargo clippy` are runnable in the dev container by building the image and running the commands if desired.
 
 Phase 2 — Tests (TDD: write tests that MUST fail before implementation)
-- T004 [P] Add contract test runner (already present) — validate path
+- [x] T004 [P] Add contract test runner (already present) — validate path
   - File: `/home/fkornel/dev/tron/specs/002-replace-the-current/contracts/tests/test_hello_run.sh`
   - Description: Ensure this script is executable (`chmod +x`) and uses the dev Docker image to run `cargo run`. This is a parallel task because it modifies only the contract test file (if any fix needed) and is independent of source files.
-- T005 [P] Add integration test that performs `curl` to `/` and asserts body
+- [x] T005 [P] Add integration test that performs `curl` to `/` and asserts body
   - File: `/home/fkornel/dev/tron/tests/test_integration_quickstart.sh`
   - Description: Ensure integration script exists and contains the steps to run the dev container and assert `Hello World` on `GET /`. Mark [P] because it is a script separate from source code.
-- T006 [P] Add unit test placeholder for greeting behavior (failing)
+- [x] T006 [P] Add unit test placeholder for greeting behavior (failing)
   - File: `/home/fkornel/dev/tron/tests/test_unit_greeting.rs`
   - Description: Add a unit test that calls `greeting()` (or a public function to be created) and expects `Hello World`. The test should fail because the function isn't implemented yet (TDD).
 
