@@ -40,7 +40,7 @@
 **CRITICAL: These tests MUST exist and (initially) fail before implementation adjustments.**
 - [x] T006 [P] Ensure contract test script `/home/fkornel/dev/tron/specs/001-devcontainer-with-rust/contracts/tests/test_hello_run.sh` is executable and asserts exact `Hello world`.
 - [x] T007 [P] Create integration test `/home/fkornel/dev/tron/tests/integration/test_quickstart.sh` reproducing quickstart steps (expects container run output `Hello world`).
-- [ ] T008 Add unit test scaffold `/home/fkornel/dev/tron/tests/unit/test_greeting.rs` asserting greeting function returns `Hello world` (will fail until function implemented).
+- [x] T008 Add unit test scaffold `/home/fkornel/dev/tron/tests/test_unit_greeting.rs` asserting greeting function returns `Hello world` (will fail until function implemented).
 
 ## Phase 3.3: Core Implementation (ONLY after tests are failing)
 - [ ] T009 Implement greeting function in `/home/fkornel/dev/tron/src/main.rs` returning exact string `Hello world` (ensure no newline mismatches if tests are strict).
