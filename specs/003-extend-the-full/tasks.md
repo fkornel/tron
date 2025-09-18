@@ -63,6 +63,7 @@ Phase 3.3 — Core Implementation (after tests fail)
   - Action: Ensure `docker-compose.yml`'s backend service starts the compiled binary. Use `docker compose -f /home/fkornel/dev/tron/docker-compose.yml up --build -d` to run.
   - Verify: `curl -sS http://localhost:8080/` returns `Hello World`.
   - Dependency: T020
+  - Status: completed
 
 - T022 Implement frontend WASM build pipeline (inside dev container)
   - Action: Add build steps to produce `frontend/dist/` with `frontend_wasm.wasm` and `bootstrap.js`. For LLM execution: write a placeholder build script `/home/fkornel/dev/tron/frontend/build_frontend.sh` that documents commands to run inside the dev container to produce `dist/` (e.g., `wasm-pack build --target web --out-dir dist`), mark it executable.
