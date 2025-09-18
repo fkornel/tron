@@ -15,8 +15,7 @@ async fn main() {
     let listener = std::net::TcpListener::bind(addr).expect("failed to bind");
     listener.set_nonblocking(true).expect("failed to set nonblocking");
 
-    hyper::Server::from_tcp(listener)
-        .expect("failed to create server from tcp")
+    hyper::Server::from(listener)
         .serve(app.into_make_service())
         .await
         .expect("server failed");
