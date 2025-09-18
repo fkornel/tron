@@ -11,8 +11,12 @@ async fn main() {
         .route("/", get(root_handler))
         .route("/health", get(health_handler));
 
-    // Start server
-    hyper::Server::bind(&addr)
+    // Start server using a std TcpListener and hyper::Server::from_tcp
+    let listener = std::net::TcpListener::bind(addr).expect("failed to bind");
+    listener.set_nonblocking(true).expect("failed to set nonblocking");
+
+    hyper::Server::from_tcp(listener)
+        .expect("failed to create server from tcp")
         .serve(app.into_make_service())
         .await
         .expect("server failed");
