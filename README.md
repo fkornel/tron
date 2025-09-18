@@ -27,3 +27,4 @@ Notes
 - The project pins the Rust toolchain in `rust-toolchain`.
 - Tests live under `tests/` and are executed inside the dev container.
 - If you need an interactive shell in the image, use `./dev.sh shell`.
+
