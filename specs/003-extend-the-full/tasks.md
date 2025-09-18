@@ -99,6 +99,7 @@ Phase 3.5 — Polish
   - Action: Edit the file at `/home/fkornel/dev/tron/specs/003-extend-the-full/quickstart.md` to include exact commands used in tasks.
   - Verify: File updated and committed.
   - Dependency: none
+  - Status: completed
 
 Parallel groups and agent commands
 
