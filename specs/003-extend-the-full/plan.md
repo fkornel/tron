@@ -31,7 +31,7 @@
 - Phase 3-4: Implementation execution (manual or via tools)
 
 ## Summary
-[Extract from feature spec: primary requirement + technical approach from research]
+This feature adds a Docker Compose integration with two independent services: a Rust backend image (exposes `GET /` and `/health`) and a Rust/WASM frontend image that fetches the greeting and logs it to the browser console. The plan enforces container-first development and places executable tests under the repository `tests/` directory per the constitution.
 
 ## Technical Context
 **Language/Version**: Rust 1.80.0 (from `rust-toolchain`)  
@@ -69,8 +69,8 @@ specs/[###-feature]/
 ├── contracts/           # Phase 1 output (/plan command)
 └── tasks.md             # Phase 2 output (/tasks command - NOT created by /plan)
 ```
-
 ### Source Code (repository root)
+
 ```
 # Option 1: Single project (DEFAULT)
 src/
@@ -79,10 +79,13 @@ src/
 ├── cli/
 └── lib/
 
-tests/
-├── contract/
-├── integration/
-└── unit/
+# Tests: per Constitution, place executable test sources directly under the repository top-level `tests/` directory.
+# Example test filenames:
+# - test_unit_greeting.rs
+# - test_integration_quickstart.rs
+# - test_contract_hello_run.sh
+
+tests/  # All test files live here (no subdirectories)
 
 # Option 2: Web application (when "frontend" + "backend" detected)
 backend/
@@ -90,14 +93,12 @@ backend/
 │   ├── models/
 │   ├── services/
 │   └── api/
-└── tests/
 
 frontend/
 ├── src/
 │   ├── components/
 │   ├── pages/
 │   └── services/
-└── tests/
 
 # Option 3: Mobile + API (when "iOS/Android" detected)
 api/
@@ -107,7 +108,7 @@ ios/ or android/
 └── [platform-specific structure]
 ```
 
-**Structure Decision**: [DEFAULT to Option 1 unless Technical Context indicates web/mobile app]
+**Structure Decision**: Option 2 — Web application (frontend + backend)
 
 ## Phase 0: Outline & Research
 1. **Extract unknowns from Technical Context** above:
