@@ -16,6 +16,7 @@ Phase 3.1 — Setup
   - Verify: `docker image ls` shows image named `tron-dev:001` (or specified `TRON_IMG`) and `./dev.sh shell` opens a shell.
   - Output files modified: none
   - Dependencies: none
+  - Status: completed
 
 - T002 [P] Add frontend scaffold directory `frontend/` and minimal files
   - Action: Create directory `/home/fkornel/dev/tron/frontend/` and add:
@@ -26,13 +27,15 @@ Phase 3.1 — Setup
     - `/home/fkornel/dev/tron/frontend/Dockerfile`
   - Verify: Files exist and are readable.
   - Parallelizable: yes [P]
+  - Status: completed
 
-- T003 [P] Add `specs/003-extend-the-full/docker-compose.yml` to define `frontend` and `backend` services
-  - Action: Create `/home/fkornel/dev/tron/specs/003-extend-the-full/docker-compose.yml` with services:
+- T003 [P] Add `docker-compose.yml` at repo root to define `frontend` and `backend` services
+  - Action: Create `/home/fkornel/dev/tron/docker-compose.yml` with services:
     - `backend`: build context `.` using repo Dockerfile, set `PORT=8080`, expose `8080:8080`.
-    - `frontend`: build context `./frontend`, expose `8080:80` (or map host 8080), and depends_on `backend`.
-  - Verify: `docker compose -f /home/fkornel/dev/tron/specs/003-extend-the-full/docker-compose.yml config` exits 0.
+    - `frontend`: build context `./frontend`, expose `8081:80` (map host 8081), and depends_on `backend`.
+  - Verify: `docker compose -f /home/fkornel/dev/tron/docker-compose.yml config` exits 0.
   - Parallelizable: yes [P]
+  - Status: completed
 
 Phase 3.2 — Tests First (TDD)
 
@@ -54,7 +57,7 @@ Phase 3.3 — Core Implementation (after tests fail)
   - Dependency: T001
 
 - T021 Implement backend service start via compose
-  - Action: Ensure `specs/003-extend-the-full/docker-compose.yml`'s backend service starts the compiled binary. Use `docker compose -f /home/fkornel/dev/tron/specs/003-extend-the-full/docker-compose.yml up --build -d` to run.
+  - Action: Ensure `docker-compose.yml`'s backend service starts the compiled binary. Use `docker compose -f /home/fkornel/dev/tron/docker-compose.yml up --build -d` to run.
   - Verify: `curl -sS http://localhost:8080/` returns `Hello World`.
   - Dependency: T020
 
