@@ -34,14 +34,14 @@ Phase 2 — Tests (TDD: write tests that MUST fail before implementation)
   - Description: Add a unit test that calls `greeting()` (or a public function to be created) and expects `Hello World`. The test should fail because the function isn't implemented yet (TDD).
 
 Phase 3 — Core Implementation (after tests fail)
-- T007 Implement `src/main.rs` with an `axum` HTTP server that exposes `/` and `/health`
+- [x] T007 Implement `src/main.rs` with an `axum` HTTP server that exposes `/` and `/health`
   - File: `/home/fkornel/dev/tron/src/main.rs`
   - Description: Create a server binding to `0.0.0.0:${PORT:-8080}` (read from `PORT` env or default to 8080). Implement `GET /` returning status 200, header `Content-Type: text/plain; charset=utf-8`, and body exactly `Hello World`. Implement `GET /health` returning 200 and `Hello World` (or `OK`). Ensure `cargo run` starts the server. Do NOT add extra logging that changes response body.
   - Dependency notes: After T001, T004-006 tests should fail before this task is implemented.
-- T008 Implement a small module or function for the greeting used by unit tests
+- [x] T008 Implement a small module or function for the greeting used by unit tests
   - File: `/home/fkornel/dev/tron/src/lib.rs`
   - Description: Create a `pub fn greeting() -> &'static str` returning `"Hello World"` and wire it into `main.rs` HTTP handler so unit tests can call it.
-  - Dependency notes: This is the unit-level implementation that satisfies T006.
+  - Dependency notes: This is the unit-level implementation that satisfies T006. Completed and committed (feat(greeting): return exact 'Hello World' (T008))
 - T009 [P] Add simple request logging middleware (separate file to allow parallel work)
   - File: `/home/fkornel/dev/tron/src/middleware/logging.rs`
   - Description: Implement minimal logging of incoming requests (method, path) to `stdout`. This should not affect responses.
