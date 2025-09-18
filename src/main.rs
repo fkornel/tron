@@ -1,45 +1,51 @@
 mod middleware;
 
 use std::env;
-use std::io::{Read, Write};
-use std::net::{TcpListener, TcpStream};
-use std::thread;
-use std::time::Duration;
+use std::net::SocketAddr;
+
+use axum::{
+    routing::get,
+    Router,
+    http::{Request, StatusCode, Response},
+    response::IntoResponse,
+};
+use hyper::Body;
 
 use crate::middleware::logging;
 
-fn handle_client(mut stream: TcpStream) {
-    // Read request (we don't parse it fully)
-    let mut buf = [0u8; 4096];
-    let _ = stream.set_read_timeout(Some(Duration::from_millis(500)));
-    let n = stream.read(&mut buf).unwrap_or(0);
-
-    // Log the request with middleware helper (non-mutating)
-    logging::log_request(&stream, &buf[..n]);
-
+async fn root_handler(req: Request<Body>) -> impl IntoResponse {
+    logging::log_request_info(req.method().as_str(), req.uri().path());
     let body = tron::greeting();
-    let response = format!(
-        "HTTP/1.1 200 OK\r\nContent-Type: text/plain\r\nContent-Length: {}\r\n\r\n{}",
-        body.len(),
-        body
-    );
-
-    let _ = stream.write_all(response.as_bytes());
-    let _ = stream.flush();
+    let resp = Response::builder()
+        .status(StatusCode::OK)
+        .header("Content-Type", "text/plain")
+        .body(Body::from(body))
+        .unwrap();
+    resp
 }
 
-fn main() {
-    let port: u16 = env::var("PORT").ok().and_then(|s| s.parse().ok()).unwrap_or(8080);
-    let addr = format!("0.0.0.0:{}", port);
+async fn health_handler(req: Request<Body>) -> impl IntoResponse {
+    logging::log_request_info(req.method().as_str(), req.uri().path());
+    let resp = Response::builder()
+        .status(StatusCode::OK)
+        .header("Content-Type", "text/plain")
+        .body(Body::from("OK"))
+        .unwrap();
+    resp
+}
 
-    let listener = TcpListener::bind(&addr).expect("failed to bind");
-    // Accept connections and spawn a thread per connection
-    for stream in listener.incoming() {
-        match stream {
-            Ok(s) => {
-                thread::spawn(|| handle_client(s));
-            }
-            Err(e) => eprintln!("accept error: {}", e),
-        }
-    }
+#[tokio::main]
+async fn main() {
+    let port: u16 = env::var("PORT").ok().and_then(|s| s.parse().ok()).unwrap_or(8080);
+    let addr = SocketAddr::from(([0, 0, 0, 0], port));
+
+    let app = Router::new()
+        .route("/", get(root_handler))
+        .route("/health", get(health_handler));
+
+    println!("Listening on {}", addr);
+    axum::Server::bind(&addr)
+        .serve(app.into_make_service())
+        .await
+        .expect("server failed");
 }
