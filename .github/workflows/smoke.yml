@@ -29,4 +29,4 @@ jobs:
         run: docker run --rm -v "${{ github.workspace }}:/workspace" -w /workspace tron-dev:ci cargo test --quiet
 
       - name: Run contract test
-        run: bash ./specs/002-replace-the-current/contracts/tests/test_hello_run.sh
+        run: timeout 10m bash -lc 'set -x; IMAGE=tron-dev:ci bash ./specs/002-replace-the-current/contracts/tests/test_hello_run.sh'
