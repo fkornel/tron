@@ -1,4 +1,29 @@
-fn main() {
-    // Print exact greeting required by contract tests
-    println!("{}", tron::greeting());
+use axum::{routing::get, Router, response::IntoResponse, http::HeaderMap};
+
+#[tokio::main]
+async fn main() {
+    // Read PORT from env or default to 8080
+    let port: u16 = std::env::var("PORT").ok().and_then(|s| s.parse().ok()).unwrap_or(8080);
+    let addr = std::net::SocketAddr::from(([0, 0, 0, 0], port));
+
+    // Build routes
+    let app = Router::new()
+        .route("/", get(root_handler))
+        .route("/health", get(health_handler));
+
+    // Start server
+    axum::Server::bind(&addr)
+        .serve(app.into_make_service())
+        .await
+        .expect("server failed");
+}
+
+async fn root_handler() -> impl IntoResponse {
+    let mut headers = HeaderMap::new();
+    headers.insert("Content-Type", "text/plain; charset=utf-8".parse().unwrap());
+    (headers, tron::greeting().to_string())
+}
+
+async fn health_handler() -> impl IntoResponse {
+    (axum::http::StatusCode::OK, "OK")
 }
