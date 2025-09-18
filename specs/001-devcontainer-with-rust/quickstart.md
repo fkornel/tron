@@ -42,6 +42,8 @@ Steps:
            run: docker run --rm -v "$PWD":/workspace -w /workspace tron-dev:001 cargo run --quiet
    ```
 
+CI status: ![smoke](https://github.com/fkornel/tron/actions/workflows/smoke.yml/badge.svg)
+
 Notes:
 - The repository includes a `rust-toolchain` file to pin the Rust version used by the build.
 - The exact greeting is expected to be: "Hello world" (case-sensitive).

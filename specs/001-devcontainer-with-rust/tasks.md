@@ -53,9 +53,9 @@
 - [x] T014 Add Makefile at `/home/fkornel/dev/tron/Makefile` with targets: `build-image`, `run`, `test` wrapping docker commands (optional but improves DX).
 
 ## Phase 3.5: Polish
-- [ ] T015 [P] Add lint/config: `/home/fkornel/dev/tron/rustfmt.toml` or confirm default formatting (document decision in README).
-- [ ] T016 [P] Add documentation refinement to `/home/fkornel/dev/tron/specs/001-devcontainer-with-rust/quickstart.md` linking CI badge once workflow exists.
-- [ ] T017 [P] Add CONTRIBUTING snippet or section in `/home/fkornel/dev/tron/README.md` describing docker-only workflow.
+- [x] T015 [P] Add lint/config: `/home/fkornel/dev/tron/rustfmt.toml` or confirm default formatting (document decision in README).
+- [x] T016 [P] Add documentation refinement to `/home/fkornel/dev/tron/specs/001-devcontainer-with-rust/quickstart.md` linking CI badge once workflow exists.
+- [x] T017 [P] Add CONTRIBUTING snippet or section in `/home/fkornel/dev/tron/README.md` describing docker-only workflow.
 - [ ] T018 Review and remove unused placeholder files (if any) in feature dir.
 - [ ] T019 Final verification script `/home/fkornel/dev/tron/scripts/verify.sh` running contract + integration tests.
 
