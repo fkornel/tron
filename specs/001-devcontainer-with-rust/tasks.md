@@ -57,7 +57,7 @@
 - [x] T016 [P] Add documentation refinement to `/home/fkornel/dev/tron/specs/001-devcontainer-with-rust/quickstart.md` linking CI badge once workflow exists.
 - [x] T017 [P] Add CONTRIBUTING snippet or section in `/home/fkornel/dev/tron/README.md` describing docker-only workflow.
 - [x] T018 Review and remove unused placeholder files (if any) in feature dir.
-- [ ] T019 Final verification script `/home/fkornel/dev/tron/scripts/verify.sh` running contract + integration tests.
+- [x] T019 Final verification script `/home/fkornel/dev/tron/scripts/verify.sh` running contract + integration tests.
 
 ## Dependencies
 - T001 before T002 (Dockerfile references pinned version) and before T003 (toolchain consistency).
