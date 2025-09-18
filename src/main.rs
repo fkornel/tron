@@ -1,5 +1,4 @@
 use axum::{Router, routing::get, response::IntoResponse, http::HeaderMap};
-use axum::Server;
 
 #[tokio::main]
 async fn main() {
