@@ -43,11 +43,13 @@ Phase 3.2 — Tests First (TDD)
   - Action: Create executable script `/home/fkornel/dev/tron/tests/test_contract_backend_root.sh` with the same behavior as `test_contract_hello_run.sh` but explicitly checks `GET /` per OpenAPI.
   - Verify: File exists and is executable (`chmod +x`).
   - Dependency: none (can be written now)
+  - Status: completed
 
 - T011 [P] Create contract test for `GET /health` in top-level tests
   - Action: Create script `/home/fkornel/dev/tron/tests/test_contract_backend_health.sh` that `curl` GETs `/health` and asserts 200 and body `OK`.
   - Verify: File exists and is executable.
   - Dependency: none
+  - Status: completed
 
 Phase 3.3 — Core Implementation (after tests fail)
 
