@@ -43,7 +43,7 @@
 - [x] T008 Add unit test scaffold `/home/fkornel/dev/tron/tests/test_unit_greeting.rs` asserting greeting function returns `Hello world` (will fail until function implemented).
 
 ## Phase 3.3: Core Implementation (ONLY after tests are failing)
-- [ ] T009 Implement greeting function in `/home/fkornel/dev/tron/src/main.rs` returning exact string `Hello world` (ensure no newline mismatches if tests are strict).
+ - [x] T009 Implement greeting function in `/home/fkornel/dev/tron/src/lib.rs` returning exact string `Hello world` (ensure no newline mismatches if tests are strict).
 - [ ] T010 Update main to call greeting function and print output once (no extra logging) in `/home/fkornel/dev/tron/src/main.rs`.
 - [ ] T011 Add README section in `/home/fkornel/dev/tron/README.md` referencing quickstart and container usage.
 - [ ] T012 Implement `dev.sh` logic (if placeholder added) for build, run, test commands in `/home/fkornel/dev/tron/dev.sh`.
