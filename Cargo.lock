@@ -643,6 +643,7 @@ dependencies = [
  "humantime",
  "hyper",
  "tokio",
+ "tower",
 ]
 
 [[package]]
