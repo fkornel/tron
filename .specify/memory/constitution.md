@@ -43,7 +43,17 @@
 ## Governance
 <!-- Example: Constitution supersedes all other practices; Amendments require documentation, approval, migration plan -->
 
-[GOVERNANCE_RULES]
+All contributors, CI systems, and automation for this repository MUST follow the Host Runtime Rule:
+
+- **Rule (Host Runtime)**: The host machine used for development, testing, or automation SHALL provide only the `docker` command (or an equivalent OCI-compatible container runtime). All development-related activities — including building the project, running the application, and executing tests — MUST be executed inside the repository's development container image.
+
+- **Scope**: This rule applies to local developer workflows, CI jobs, contributor tooling, and any scripts or automation that build, test, or run project code.
+
+- **Rationale**: Enforcing containerized development ensures reproducible toolchains, simplifies onboarding, reduces variance between developer environments and CI, and centralizes environment maintenance inside the dev container image.
+
+- **Enforcement**: Pull requests that introduce host-only build or test steps (i.e., that require installing project toolchains or build dependencies on the host) MUST include justification and an explicit, documented exception approved by maintainers. CI checks SHOULD run the repository's build and test steps inside the dev container; reviewers should block changes that violate this rule until remediation is provided.
+
+- **Exceptions & Migration**: Temporary exceptions are permitted only with documented migration plans, an explicit approval, and an automated path to migrate the workflow into the containerized model within a defined timeframe.
 <!-- Example: All PRs/reviews must verify compliance; Complexity must be justified; Use [GUIDANCE_FILE] for runtime development guidance -->
 
 **Version**: [CONSTITUTION_VERSION] | **Ratified**: [RATIFICATION_DATE] | **Last Amended**: [LAST_AMENDED_DATE]
