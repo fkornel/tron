@@ -15,8 +15,9 @@ async fn main() {
         Ok::<_, Infallible>(service_fn(handle_request))
     });
 
-    // Start server
-    let server = Server::bind(&addr).serve(make_svc);
+    // Start server using AddrIncoming
+    let incoming = hyper::server::conn::AddrIncoming::bind(&addr).expect("failed to bind incoming");
+    let server = Server::from(incoming).serve(make_svc);
     server.await.expect("server failed");
 }
 
