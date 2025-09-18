@@ -11,10 +11,10 @@ Commands:
 
 ```bash
 # Build the development image (if not already built)
-docker build -t tron-dev:001 -f Dockerfile .
+./dev.sh build
 
 # Run the server inside the dev image, forwarding port 8080
-docker run --rm -p 8080:8080 -v "$PWD":/workspace -w /workspace tron-dev:001 sh -c "cargo run"
+./dev.sh run
 ```
 
 2. Verify endpoint:
@@ -22,9 +22,9 @@ docker run --rm -p 8080:8080 -v "$PWD":/workspace -w /workspace tron-dev:001 sh 
 ```bash
 # From host, once container is running
 curl -i http://localhost:8080/
-# Expect: HTTP/1.1 200 OK
-# Content-Type: text/plain; charset=utf-8
-# Body: Hello World
+# Expected status: HTTP/1.1 200 OK
+# Expected header: Content-Type: text/plain
+# Expected body: Hello World
 ```
 
 3. Run contract test (from repository root):
@@ -34,5 +34,5 @@ curl -i http://localhost:8080/
 ```
 
 Notes:
-- Ensure the server binds to `0.0.0.0` or `localhost` inside the container so tests can reach it via the mapped port.
+- Ensure the server binds to `0.0.0.0` inside the container so tests can reach it via the mapped port.
 - The dev image approach enforces the project's constitution rule to perform builds and runs inside containers.
