@@ -10,7 +10,8 @@ async fn main() {
         .route("/", get(root_handler))
         .route("/health", get(health_handler));
 
-    Server::bind(&addr)
+    // Use hyper::Server::bind to run the axum app
+    hyper::Server::bind(&addr)
         .serve(app.into_make_service())
         .await
         .expect("server failed");
