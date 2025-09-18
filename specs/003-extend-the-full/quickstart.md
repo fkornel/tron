@@ -25,10 +25,20 @@ Steps
 3. Start services via Docker Compose (run from repo root):
 
 ```bash
+# Use the repo-root compose file. This builds images and starts them in the foreground.
 docker compose -f docker-compose.yml up --build
+
+# To run in detached mode:
+docker compose -f docker-compose.yml up --build -d
+
+# To stop and remove containers created by compose:
+docker compose -f docker-compose.yml down
 ```
 
-4. Open the frontend in a browser at `http://localhost:8081` (port may vary based on compose file). Open the browser console — the frontend WASM module will fetch `http://backend:8080/` (or proxied origin) and log `Hello World`.
+4. Verify the services
+
+- Backend: `http://localhost:8080/` should return `Hello World`.
+- Frontend: `http://localhost:8081/` serves the static site (NGINX) that loads the WASM bundle and logs `Hello World` to the browser console.
 
 5. Notes about frontend assets
 

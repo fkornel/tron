@@ -79,11 +79,13 @@ Phase 3.3 — Core Implementation (after tests fail)
 
 Phase 3.4 — Integration
 
-- T030 [P] Compose up and validate integration scenario from quickstart
+ - T030 [P] Compose up and validate integration scenario from quickstart
   - Action: From repo root (inside dev container) run: `docker compose -f /home/fkornel/dev/tron/docker-compose.yml up --build --abort-on-container-exit` and wait until both services are healthy.
   - Verify: `curl -sS http://localhost:8080/` returns `Hello World`; frontend served at `http://localhost:8080` loads and console log shows `Hello World` (manual browser step optional).
   - Dependency: T021, T023
   - Parallelizable: yes [P]
+  - Status: completed
+
 
 Phase 3.5 — Polish
 
@@ -91,6 +93,7 @@ Phase 3.5 — Polish
   - Action: Create `/home/fkornel/dev/tron/tests/test_unit_greeting.rs` with a Rust test that asserts `tron::greeting()` returns `"Hello World"`.
   - Verify: `./dev.sh test` inside dev container runs unit tests and this test exists (it may fail until implementation is correct).
   - Dependency: none
+  - Status: completed
 
 - T041 [P] Documentation: update `/home/fkornel/dev/tron/specs/003-extend-the-full/quickstart.md` with exact compose commands and verification steps (already present; ensure examples match actual ports and filenames).
   - Action: Edit the file at `/home/fkornel/dev/tron/specs/003-extend-the-full/quickstart.md` to include exact commands used in tasks.
