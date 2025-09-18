@@ -112,9 +112,9 @@ Parallel groups and agent commands
   - These tasks depend on built artifacts from previous steps and therefore should be executed in order.
 
 Validation checklist (automatic)
-- [ ] One contract test created for each endpoint in `/home/fkornel/dev/tron/specs/003-extend-the-full/contracts/openapi.yaml` (expected: `/`, `/health`).
-- [ ] One model task for each entity in `/home/fkornel/dev/tron/specs/003-extend-the-full/data-model.md` (expected: `GreetingResponse` → model validation task considered optional since no persistent store).
-- [ ] Quickstart scenario mapped to integration task T030.
+- [x] One contract test created for each endpoint in `/home/fkornel/dev/tron/specs/003-extend-the-full/contracts/openapi.yaml` (expected: `/`, `/health`).
+- [x] One model task for each entity in `/home/fkornel/dev/tron/specs/003-extend-the-full/data-model.md` (expected: `GreetingResponse` → model validation task considered optional since no persistent store).
+- [x] Quickstart scenario mapped to integration task T030.
 
 Files created/edited by these tasks (examples)
 - /home/fkornel/dev/tron/frontend/index.html
