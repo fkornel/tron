@@ -57,6 +57,7 @@ Phase 3.3 — Core Implementation (after tests fail)
   - Action: Ensure `/home/fkornel/dev/tron/Dockerfile` builds the backend image used by compose. If adjustments are needed, modify `Dockerfile` to produce a runnable backend image with `cargo build --release` and `CMD` to run the binary. Commit changes.
   - Verify: `docker build -t backend:local .` inside dev container completes successfully.
   - Dependency: T001
+  - Status: completed
 
 - T021 Implement backend service start via compose
   - Action: Ensure `docker-compose.yml`'s backend service starts the compiled binary. Use `docker compose -f /home/fkornel/dev/tron/docker-compose.yml up --build -d` to run.

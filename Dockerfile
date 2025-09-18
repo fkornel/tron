@@ -1,35 +1,41 @@
-# Development image for the "Devcontainer With Rust" feature
-# Pinned to the repository toolchain: /home/fkornel/dev/tron/rust-toolchain -> 1.80.0
-# This image is intended for local/CI smoke checks; project files are mounted at runtime.
+# Multi-stage Dockerfile for building the Tron backend
+# Builds a release binary in a Rust builder stage and copies it into a slim runtime image.
 
-FROM rust:1.80.0
+FROM rust:1.80 as builder
 
-# Keep labels minimal and explicit
-LABEL org.opencontainers.image.title="tron-dev" \
-      org.opencontainers.image.description="Development image for Tron (Rust 1.80.0)"
+WORKDIR /usr/src/tron
 
-# Install a few minimal packages commonly needed when building Rust crates
-# - git: fetch dependencies from VCS
-# - ca-certificates: TLS for downloads
-# - build-essential / pkg-config / libssl-dev: common native build deps (kept minimal)
+# Install platform packages needed for some crates (if required)
 RUN apt-get update \
     && apt-get install -y --no-install-recommends \
-       git \
-       ca-certificates \
-       build-essential \
        pkg-config \
        libssl-dev \
+       ca-certificates \
     && rm -rf /var/lib/apt/lists/*
 
-# Install Rust tooling components for formatting and linting
-RUN rustup component add rustfmt clippy
+# Cache dependencies by copying manifests first
+COPY Cargo.toml Cargo.lock ./
 
-# Use a workspace directory that will be mounted by the quickstart/contract tests
-WORKDIR /workspace
+# Copy the source code
+COPY . .
 
-# Ensure cargo uses a writable location for cached artifacts
-ENV CARGO_HOME=/usr/local/cargo \
-    RUSTUP_TOOLCHAIN=1.80.0
+# Build the release binary
+RUN cargo build --release
 
-# Default to an interactive shell; quickstart runs `cargo run` explicitly.
-CMD ["bash"]
+# Runtime image
+FROM debian:bookworm-slim
+
+# Install CA certs for HTTPS
+RUN apt-get update \
+    && apt-get install -y --no-install-recommends ca-certificates \
+    && rm -rf /var/lib/apt/lists/*
+
+# Copy the compiled binary from the builder stage
+COPY --from=builder /usr/src/tron/target/release/tron /usr/local/bin/tron
+
+# Default port - can be overridden by env
+ENV PORT=8080
+EXPOSE 8080
+
+# Run the compiled binary
+CMD ["/usr/local/bin/tron"]
