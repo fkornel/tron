@@ -46,7 +46,7 @@
  - [x] T009 Implement greeting function in `/home/fkornel/dev/tron/src/lib.rs` returning exact string `Hello world` (ensure no newline mismatches if tests are strict).
 - [x] T010 Update main to call greeting function and print output once (no extra logging) in `/home/fkornel/dev/tron/src/main.rs`.
 - [x] T011 Add README section in `/home/fkornel/dev/tron/README.md` referencing quickstart and container usage.
-- [ ] T012 Implement `dev.sh` logic (if placeholder added) for build, run, test commands in `/home/fkornel/dev/tron/dev.sh`.
+- [x] T012 Implement `dev.sh` logic (if placeholder added) for build, run, test commands in `/home/fkornel/dev/tron/dev.sh`.
 
 ## Phase 3.4: Integration
 - [ ] T013 Create CI smoke workflow at `/home/fkornel/dev/tron/.github/workflows/smoke.yml` building image and running `cargo run` inside container.
