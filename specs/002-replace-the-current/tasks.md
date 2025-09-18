@@ -60,10 +60,10 @@ Phase 4 — Integration & Validation
   - Description: Ensure the unit test for `greeting()` passes. Depends on T008.
 
 Phase 5 — Polish
-- T013 [P] Add `README` or update `quickstart.md` with final verified commands
+- [x] T013 [P] Add `README` or update `quickstart.md` with final verified commands
   - File: `/home/fkornel/dev/tron/README.md` or update `/home/fkornel/dev/tron/specs/002-replace-the-current/quickstart.md`
   - Description: Ensure quickstart matches the exact commands used in contract/integration tests.
-- T014 [P] Add unit tests for edge cases (405 on POST /, 404 on unknown path)
+- [x] T014 [P] Add unit tests for edge cases (405 on POST /, 404 on unknown path)
   - File: `/home/fkornel/dev/tron/tests/test_unit_errors.rs`
   - Description: Add tests asserting `405` for POST `/` and `404` for unknown path. These are parallel if implemented in separate test files.
 - T015 [P] Ensure formatting and linting passes in dev container
