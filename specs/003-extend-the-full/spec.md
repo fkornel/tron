@@ -80,10 +80,10 @@ As a developer or reviewer, I want a Docker Compose setup that runs two independ
 - **FR-006**: Both services MUST expose a `/health` endpoint returning 200 for readiness checks.
 - **FR-007**: The docker-compose setup MUST map ports such that the frontend is reachable at `localhost:<port>` in local development.
 
-*Ambiguities / Clarifications Needed*
-- **CL-001**: [NEEDS CLARIFICATION: Confirm the backend endpoint path to call (defaulting to `/`).]
-- **CL-002**: [NEEDS CLARIFICATION: Browser minimum version/support requirements for the Rust/WASM bundle.]
-- **CL-003**: [NEEDS CLARIFICATION: Should the frontend include any UI beyond index.html, or is console output sufficient?]
+*Clarifications (resolved)*
+- **CL-001**: Resolved — The frontend will call the backend root path `/` to obtain the greeting.
+- **CL-002**: Resolved — Support modern browsers (current versions of Chrome, Firefox, and Safari on desktop and iOS) that support WebAssembly.
+- **CL-003**: Resolved — Console-only frontend is sufficient; allow a minimal auto-generated JavaScript bootstrap solely to initialize the Wasm module (no handwritten JS application logic).
 
 ### Key Entities
 - **Frontend**: Static site + Rust/WASM bundle; responsible for initiating REST requests and logging results; no persistent storage.
@@ -100,8 +100,8 @@ As a developer or reviewer, I want a Docker Compose setup that runs two independ
 - [x] All mandatory sections completed
 
 ### Requirement Completeness
-- [ ] No [NEEDS CLARIFICATION] markers remain
-- [x] Requirements are testable and unambiguous (pending clarifications)
+- [x] No [NEEDS CLARIFICATION] markers remain
+- [x] Requirements are testable and unambiguous
 - [x] Success criteria are measurable
 - [x] Scope is clearly bounded
 - [x] Dependencies and assumptions identified

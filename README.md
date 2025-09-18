@@ -25,6 +25,16 @@ curl -i http://localhost:8080/
 # Expected body: Hello World
 ```
 
+Run services with Docker Compose (frontend + backend)
+
+```
+# from the repository root
+docker compose -f docker-compose.yml up --build
+```
+
+Notes:
+- The Compose file in the repository root defines `backend` and `frontend` services. The frontend service copies `frontend/dist/` into an nginx image — ensure compiled frontend assets exist in `frontend/dist/` (for example, run `wasm-pack build` inside the dev image).
+
 Run tests inside the container:
 
 ```

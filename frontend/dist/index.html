@@ -1,0 +1,17 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Tron Frontend (WASM)</title>
+</head>
+<body>
+  <h1>Tron Frontend</h1>
+  <p>Frontend serves a minimal page and initializes the Rust/WASM bundle via the auto-generated bootstrap.</p>
+
+  <!-- The bootstrap script (auto-generated) is expected at /static/bootstrap.js -->
+  <script type="module" src="/static/bootstrap.js"></script>
+
+  <!-- No handwritten application JS here — the wasm bundle performs the fetch and console logging -->
+</body>
+</html>

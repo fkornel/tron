@@ -25,10 +25,20 @@ Steps
 3. Start services via Docker Compose (run from repo root):
 
 ```bash
-docker compose -f specs/003-extend-the-full/docker-compose.yml up --build
+docker compose -f docker-compose.yml up --build
 ```
 
-4. Open the frontend in a browser at `http://localhost:8080` (port may vary based on compose file). Open the browser console — the frontend WASM module will fetch `http://backend:8080/` (or proxied origin) and log `Hello World`.
+4. Open the frontend in a browser at `http://localhost:8081` (port may vary based on compose file). Open the browser console — the frontend WASM module will fetch `http://backend:8080/` (or proxied origin) and log `Hello World`.
+
+5. Notes about frontend assets
+
+- Ensure compiled frontend assets are present in `frontend/dist/` (the compose frontend service copies `frontend/dist/` into the nginx image). For example, run the wasm build inside the dev container:
+
+```bash
+# inside dev image
+cd frontend && wasm-pack build --target web --out-dir ../frontend/dist
+```
+
 
 5. Run contract tests (inside the dev container):
 

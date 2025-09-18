@@ -1,0 +1,25 @@
+version: '3.8'
+
+services:
+  backend:
+    build:
+      context: ../../
+      dockerfile: Dockerfile
+    image: tron-backend:local
+    environment:
+      - PORT=8080
+    ports:
+      - "8080:8080"
+    volumes:
+      - "../../:/workspace:cached"
+    command: ["bash", "-lc", "/usr/local/cargo/bin/cargo run --release --manifest-path /workspace/Cargo.toml"]
+    restart: unless-stopped
+
+  frontend:
+    build:
+      context: ../../frontend
+      dockerfile: Dockerfile
+    image: tron-frontend:local
+    ports:
+      - "8081:80"
+    restart: unless-stopped

@@ -1,0 +1,41 @@
+# Multi-stage Dockerfile for backend: build Rust binary, produce a slim runtime image
+
+# Builder stage: compile the binary
+FROM rust:1.80.0 as builder
+
+WORKDIR /workspace
+
+# Cache cargo registry and git dependencies for faster builds
+ENV CARGO_HOME=/usr/local/cargo
+
+# Copy only Cargo files first for dependency caching
+COPY Cargo.toml Cargo.lock ./
+
+# Create a dummy src to allow `cargo build` to complete dependency download step
+RUN mkdir -p src && echo "fn main() { println!(\"hello\"); }" > src/main.rs || true
+
+# Fetch dependencies
+RUN cargo fetch
+
+# Now copy the full source and build the release binary
+COPY . .
+RUN cargo build --release --bin tron
+
+# Runtime stage: use a small base image and copy the compiled binary
+FROM debian:bookworm-slim as runtime
+
+# Install minimal runtime deps if needed
+RUN apt-get update && apt-get install -y ca-certificates && rm -rf /var/lib/apt/lists/*
+
+# Create non-root user
+RUN useradd --no-create-home --uid 1000 appuser || true
+WORKDIR /app
+
+# Copy binary from builder
+COPY --from=builder /workspace/target/release/tron /app/tron
+RUN chown appuser:appuser /app/tron && chmod +x /app/tron
+
+USER appuser
+
+EXPOSE 8080
+CMD ["/app/tron"]
