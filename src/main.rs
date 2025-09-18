@@ -1,14 +1,21 @@
+mod middleware;
+
 use std::env;
 use std::io::{Read, Write};
 use std::net::{TcpListener, TcpStream};
 use std::thread;
 use std::time::Duration;
 
+use crate::middleware::logging;
+
 fn handle_client(mut stream: TcpStream) {
     // Read request (we don't parse it fully)
     let mut buf = [0u8; 4096];
     let _ = stream.set_read_timeout(Some(Duration::from_millis(500)));
-    let _ = stream.read(&mut buf);
+    let n = stream.read(&mut buf).unwrap_or(0);
+
+    // Log the request with middleware helper (non-mutating)
+    logging::log_request(&stream, &buf[..n]);
 
     let body = tron::greeting();
     let response = format!(
