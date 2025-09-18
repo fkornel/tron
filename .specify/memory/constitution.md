@@ -53,6 +53,13 @@ All contributors, CI systems, and automation for this repository MUST follow the
 
 - **Enforcement**: Pull requests that introduce host-only build or test steps (i.e., that require installing project toolchains or build dependencies on the host) MUST include justification and an explicit, documented exception approved by maintainers. CI checks SHOULD run the repository's build and test steps inside the dev container; reviewers should block changes that violate this rule until remediation is provided.
 
+- **Test Location & Naming Rule**: All executable test sources MUST be located directly under the repository `tests/` directory (top-level) — subdirectories under `tests/` are disallowed. Test filenames SHOULD include the test type as a suffix or prefix to indicate intent, for example:
+  - `test_unit_greeting.rs` for unit tests
+  - `test_integration_quickstart.rs` for integration tests
+  - `test_contract_hello_run.sh` for shell-based contract tests
+
+  This naming and placement convention ensures the test runner (`cargo test` and CI orchestrations) discovers tests consistently and reduces ambiguity about test types.
+
 - **Exceptions & Migration**: Temporary exceptions are permitted only with documented migration plans, an explicit approval, and an automated path to migrate the workflow into the containerized model within a defined timeframe.
 <!-- Example: All PRs/reviews must verify compliance; Complexity must be justified; Use [GUIDANCE_FILE] for runtime development guidance -->
 
