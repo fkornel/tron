@@ -8,6 +8,7 @@ This file records the key technical context for AI agents working on this reposi
 - Dev workflow: Container-first (use `./dev.sh` inside the dev image)
 - Test location: Top-level `tests/` directory; test filenames should indicate type (unit/integration/contract)
 - Feature: specs/003-extend-the-full — Docker Compose integration for frontend (WASM) + backend (Rust)
+- Dev Compose: repo-root `docker-compose.yml` defines `backend` and `frontend` services (production-like images); spec `docker-compose.yml` (kept in `specs/003-extend-the-full`) provides a workspace-mounted dev variant that runs `cargo run`.
 === END AUTO-GENERATED SECTION ===
 
 Manual notes:

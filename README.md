@@ -28,8 +28,14 @@ curl -i http://localhost:8080/
 Run services with Docker Compose (frontend + backend)
 
 ```
-# from the repository root
+# from the repository root - build images and start services in the foreground
 docker compose -f docker-compose.yml up --build
+
+# To run in detached mode:
+docker compose -f docker-compose.yml up --build -d
+
+# To stop and remove containers:
+docker compose -f docker-compose.yml down
 ```
 
 Notes:
