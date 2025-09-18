@@ -1,0 +1,5 @@
+# Ignore Rust/Cargo build artifacts
+target/
+
+# Editor swap files
+*.swp
