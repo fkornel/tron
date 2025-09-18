@@ -1,5 +1,5 @@
 use axum::{body::Body, http::Request, routing::get, Router};
-use tower::ServiceExt;
+use tower::util::ServiceExt;
 use tron::greeting;
 
 #[tokio::test]
