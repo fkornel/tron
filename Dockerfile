@@ -21,6 +21,9 @@ RUN apt-get update \
        libssl-dev \
     && rm -rf /var/lib/apt/lists/*
 
+# Install Rust tooling components for formatting and linting
+RUN rustup component add rustfmt clippy
+
 # Use a workspace directory that will be mounted by the quickstart/contract tests
 WORKDIR /workspace
 

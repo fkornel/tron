@@ -16,6 +16,15 @@ Run the application:
 ./dev.sh run
 ```
 
+Verify the running server from the host:
+
+```
+curl -i http://localhost:8080/
+# Expected status: HTTP/1.1 200 OK
+# Expected header: Content-Type: text/plain
+# Expected body: Hello World
+```
+
 Run tests inside the container:
 
 ```

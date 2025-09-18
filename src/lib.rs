@@ -4,5 +4,5 @@
 /// for the unit test (T008). Implementing this function is T009.
 
 pub fn greeting() -> &'static str {
-    "Hello world"
+    "Hello World"
 }
