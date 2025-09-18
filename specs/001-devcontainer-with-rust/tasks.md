@@ -33,7 +33,7 @@
 ## Phase 3.1: Setup
  - [x] T001 Create `rust-toolchain` file at `/home/fkornel/dev/tron/rust-toolchain` pinning version (e.g., `1.80.0`).
  - [x] T002 [P] Create Dockerfile at `/home/fkornel/dev/tron/Dockerfile` using pinned Rust base image.
-- [ ] T003 [P] Initialize Cargo project (if not exists) at `/home/fkornel/dev/tron/` with `Cargo.toml` and `src/main.rs` (Hello world placeholder failing contract until exact output enforced).
+- [x] T003 [P] Initialize Cargo project (if not exists) at `/home/fkornel/dev/tron/` with `Cargo.toml` and `src/main.rs` (Hello world placeholder added).
 - [ ] T004 [P] Add `dev.sh` helper script at `/home/fkornel/dev/tron/dev.sh` to wrap build/run commands via Docker.
 
 ## Phase 3.2: Tests First (TDD)
