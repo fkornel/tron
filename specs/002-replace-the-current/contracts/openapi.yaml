@@ -1,0 +1,27 @@
+openapi: 3.0.3
+info:
+  title: Hello World Server API
+  version: 0.1.0
+paths:
+  /:
+    get:
+      summary: Root endpoint returning Hello World
+      responses:
+        '200':
+          description: Plaintext Hello World
+          content:
+            text/plain:
+              schema:
+                type: string
+                example: Hello World
+  /health:
+    get:
+      summary: Health endpoint
+      responses:
+        '200':
+          description: Health check response
+          content:
+            text/plain:
+              schema:
+                type: string
+                example: Hello World

@@ -1,0 +1,6 @@
+# Clippy configuration (optional)
+# See: https://rust-lang.github.io/rust-clippy/master/index.html
+
+# Example: deny common pedantic lints via command line in CI; keep this file minimal
+# This file is intentionally left lightweight; prefer enforcing via `cargo clippy -- -D warnings` in CI
+

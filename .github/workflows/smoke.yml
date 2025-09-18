@@ -19,8 +19,14 @@ jobs:
       - name: Build dev Docker image
         run: docker build -t tron-dev:ci -f Dockerfile .
 
+      - name: Run cargo fmt check inside container
+        run: docker run --rm -v "${{ github.workspace }}:/workspace" -w /workspace tron-dev:ci sh -c "cargo fmt -- --check"
+
+      - name: Run cargo clippy inside container
+        run: docker run --rm -v "${{ github.workspace }}:/workspace" -w /workspace tron-dev:ci sh -c "cargo clippy -- -D warnings"
+
       - name: Run cargo test inside container
         run: docker run --rm -v "${{ github.workspace }}:/workspace" -w /workspace tron-dev:ci cargo test --quiet
 
-      - name: Run cargo run inside container
-        run: docker run --rm -v "${{ github.workspace }}:/workspace" -w /workspace tron-dev:ci cargo run --quiet
+      - name: Run contract test
+        run: bash ./specs/002-replace-the-current/contracts/tests/test_hello_run.sh
