@@ -47,14 +47,14 @@ Phase 3 — Core Implementation (after tests fail)
   - Description: Implement minimal logging of incoming requests (method, path) to `stdout`. This should not affect responses. Completed and committed (feat(middleware): add simple request logging helper (T009))
 
 Phase 4 — Integration & Validation
-- T010 Run contract test `specs/.../contracts/tests/test_hello_run.sh` and fix runtime issues
+- [x] T010 Run contract test `specs/.../contracts/tests/test_hello_run.sh` and fix runtime issues
   - File: `/home/fkornel/dev/tron/specs/002-replace-the-current/contracts/tests/test_hello_run.sh`
   - Command/Agent: `bash /home/fkornel/dev/tron/specs/002-replace-the-current/contracts/tests/test_hello_run.sh`
-  - Description: Run the script; if it fails because the server isn't binding correctly or `Content-Type` mismatch, adjust `src/main.rs` or headers. This task depends on T007.
-- T011 Run integration test script and fix issues
+  - Description: Run the script; if it fails because the server isn't binding correctly or `Content-Type` mismatch, adjust `src/main.rs` or headers. This task depends on T007. Completed and verified in-container execution.
+- [x] T011 Run integration test script and fix issues
   - File: `/home/fkornel/dev/tron/tests/test_integration_quickstart.sh`
   - Command/Agent: `bash /home/fkornel/dev/tron/tests/test_integration_quickstart.sh`
-  - Description: Execute and ensure test passes. Fix networking/binding if necessary. Depends on T007.
+  - Description: Execute and ensure test passes. Fix networking/binding if necessary. Depends on T007. Completed and verified (background container started and cleaned up).
 - T012 Run unit tests and fix failures
   - Command/Agent: `cargo test --manifest-path /home/fkornel/dev/tron/Cargo.toml --test test_unit_greeting.rs` or `cargo test`
   - Description: Ensure the unit test for `greeting()` passes. Depends on T008.
