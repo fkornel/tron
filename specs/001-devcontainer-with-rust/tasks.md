@@ -50,7 +50,7 @@
 
 ## Phase 3.4: Integration
 - [x] T013 Create CI smoke workflow at `/home/fkornel/dev/tron/.github/workflows/smoke.yml` building image and running `cargo run` inside container.
-- [ ] T014 Add Makefile at `/home/fkornel/dev/tron/Makefile` with targets: `build-image`, `run`, `test` wrapping docker commands (optional but improves DX).
+- [x] T014 Add Makefile at `/home/fkornel/dev/tron/Makefile` with targets: `build-image`, `run`, `test` wrapping docker commands (optional but improves DX).
 
 ## Phase 3.5: Polish
 - [ ] T015 [P] Add lint/config: `/home/fkornel/dev/tron/rustfmt.toml` or confirm default formatting (document decision in README).
