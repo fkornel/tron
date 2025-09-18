@@ -42,9 +42,9 @@ Phase 3 — Core Implementation (after tests fail)
   - File: `/home/fkornel/dev/tron/src/lib.rs`
   - Description: Create a `pub fn greeting() -> &'static str` returning `"Hello World"` and wire it into `main.rs` HTTP handler so unit tests can call it.
   - Dependency notes: This is the unit-level implementation that satisfies T006. Completed and committed (feat(greeting): return exact 'Hello World' (T008))
-- T009 [P] Add simple request logging middleware (separate file to allow parallel work)
+- [x] T009 [P] Add simple request logging middleware (separate file to allow parallel work)
   - File: `/home/fkornel/dev/tron/src/middleware/logging.rs`
-  - Description: Implement minimal logging of incoming requests (method, path) to `stdout`. This should not affect responses.
+  - Description: Implement minimal logging of incoming requests (method, path) to `stdout`. This should not affect responses. Completed and committed (feat(middleware): add simple request logging helper (T009))
 
 Phase 4 — Integration & Validation
 - T010 Run contract test `specs/.../contracts/tests/test_hello_run.sh` and fix runtime issues
