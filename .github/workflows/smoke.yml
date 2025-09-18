@@ -1,0 +1,26 @@
+name: Smoke tests (dev container)
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+  workflow_dispatch: {}
+
+jobs:
+  smoke:
+    name: Build dev image and run inside container
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Build dev Docker image
+        run: docker build -t tron-dev:ci -f Dockerfile .
+
+      - name: Run cargo test inside container
+        run: docker run --rm -v "${{ github.workspace }}:/workspace" -w /workspace tron-dev:ci cargo test --quiet
+
+      - name: Run cargo run inside container
+        run: docker run --rm -v "${{ github.workspace }}:/workspace" -w /workspace tron-dev:ci cargo run --quiet
