@@ -8,11 +8,7 @@ async fn post_to_root_returns_405() {
         .route("/", get(|| async { greeting() }))
         .route("/health", get(|| async { "OK" }));
 
-    let req = Request::builder()
-        .method("POST")
-        .uri("/")
-        .body(Body::empty())
-        .unwrap();
+    let req = Request::builder().method("POST").uri("/").body(Body::empty()).unwrap();
 
     let resp = app.oneshot(req).await.unwrap();
     assert_eq!(resp.status().as_u16(), 405);
@@ -24,11 +20,7 @@ async fn unknown_path_returns_404() {
         .route("/", get(|| async { greeting() }))
         .route("/health", get(|| async { "OK" }));
 
-    let req = Request::builder()
-        .method("GET")
-        .uri("/does-not-exist")
-        .body(Body::empty())
-        .unwrap();
+    let req = Request::builder().method("GET").uri("/does-not-exist").body(Body::empty()).unwrap();
 
     let resp = app.oneshot(req).await.unwrap();
     assert_eq!(resp.status().as_u16(), 404);
