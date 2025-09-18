@@ -3,10 +3,9 @@ mod middleware;
 use std::env;
 use std::net::SocketAddr;
 
-use axum::{routing::get, Router};
+use axum::{routing::get, Router, Server};
 use axum::body::Body as AxumBody;
 use axum::http::{Response as HttpResponse, StatusCode};
-use hyper::Server;
 
 use crate::middleware::logging;
 
