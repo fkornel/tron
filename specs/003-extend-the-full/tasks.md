@@ -75,11 +75,12 @@ Phase 3.3 — Core Implementation (after tests fail)
   - Action: Update `/home/fkornel/dev/tron/frontend/Dockerfile` to copy `dist/` into Nginx html directory; ensure build succeeds.
   - Verify: `docker build -t frontend:local ./frontend` inside dev container completes successfully.
   - Dependency: T022
+  - Status: completed
 
 Phase 3.4 — Integration
 
 - T030 [P] Compose up and validate integration scenario from quickstart
-  - Action: From repo root (inside dev container) run: `docker compose -f /home/fkornel/dev/tron/specs/003-extend-the-full/docker-compose.yml up --build --abort-on-container-exit` and wait until both services are healthy.
+  - Action: From repo root (inside dev container) run: `docker compose -f /home/fkornel/dev/tron/docker-compose.yml up --build --abort-on-container-exit` and wait until both services are healthy.
   - Verify: `curl -sS http://localhost:8080/` returns `Hello World`; frontend served at `http://localhost:8080` loads and console log shows `Hello World` (manual browser step optional).
   - Dependency: T021, T023
   - Parallelizable: yes [P]
