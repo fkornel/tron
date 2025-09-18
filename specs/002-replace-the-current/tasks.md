@@ -55,7 +55,7 @@ Phase 4 — Integration & Validation
   - File: `/home/fkornel/dev/tron/tests/test_integration_quickstart.sh`
   - Command/Agent: `bash /home/fkornel/dev/tron/tests/test_integration_quickstart.sh`
   - Description: Execute and ensure test passes. Fix networking/binding if necessary. Depends on T007. Completed and verified (background container started and cleaned up).
-- T012 Run unit tests and fix failures
+- [x] T012 Run unit tests and fix failures
   - Command/Agent: `cargo test --manifest-path /home/fkornel/dev/tron/Cargo.toml --test test_unit_greeting.rs` or `cargo test`
   - Description: Ensure the unit test for `greeting()` passes. Depends on T008.
 

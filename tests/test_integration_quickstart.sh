@@ -11,39 +11,73 @@ if ! docker image inspect "$IMAGE" >/dev/null 2>&1; then
   docker build -t "$IMAGE" -f Dockerfile .
 fi
 
-# Run the container in background and forward port
-CONTAINER_ID=$(docker run -d -p ${PORT}:${PORT} -v "$PWD":$WORKDIR -w $WORKDIR $IMAGE sh -c "cargo run --quiet")
+# Try to start the container on an available host port (8080..8099)
+CONTAINER_ID=""
+HOST_PORT=""
+for hp in $(seq 8080 8099); do
+  CONTAINER_ID=$(docker run -d -e PORT=${PORT} -p ${hp}:${PORT} -v "$PWD":$WORKDIR -w $WORKDIR $IMAGE bash -lc "export PATH=/usr/local/cargo/bin:\$PATH && /usr/local/cargo/bin/cargo run --quiet") || true
+  if [ -n "$CONTAINER_ID" ]; then
+    # ensure container is running
+    RUNNING=$(docker inspect --format='{{.State.Running}}' "$CONTAINER_ID" 2>/dev/null || echo "false")
+    if [ "$RUNNING" = "true" ]; then
+      HOST_PORT=$hp
+      break
+    else
+      docker rm -f "$CONTAINER_ID" >/dev/null 2>&1 || true
+      CONTAINER_ID=""
+    fi
+  fi
+done
+
+if [ -z "$CONTAINER_ID" ]; then
+  echo "Integration test failed: could not start container on ports 8080-8099" >&2
+  docker ps -a --filter "ancestor=$IMAGE" --format '{{.ID}} {{.Status}} {{.Names}}' >&2 || true
+  exit 1
+fi
+
+# Ensure container cleaned up on exit
 trap 'docker rm -f $CONTAINER_ID >/dev/null 2>&1 || true' EXIT
 
-# Wait a moment for the server to start
-sleep 1
+# Wait for server to start (retry curl)
+max_attempts=30
+attempt=0
+HTTP_OUT=""
+while [ $attempt -lt $max_attempts ]; do
+  HTTP_OUT=$(curl -sS -D - --max-time 2 "http://127.0.0.1:${HOST_PORT}/" 2>/dev/null) && break || true
+  attempt=$((attempt+1))
+  sleep 1
+done
 
-# Perform the request
-HTTP_OUT=$(curl -sS -D - "http://localhost:${PORT}/" || true)
+if [ -z "$HTTP_OUT" ]; then
+  echo "Integration test failed: no response from server" >&2
+  docker logs "$CONTAINER_ID" >&2 || true
+  exit 1
+fi
 
-# Check status code and headers and body
-STATUS_LINE=$(echo "$HTTP_OUT" | sed -n '1p' | tr -d '\r')
-BODY=$(echo "$HTTP_OUT" | sed -n '2,$p' | tr -d '\r')
+# Parse status line and body (robust)
+STATUS_LINE=$(printf '%s' "$HTTP_OUT" | sed -n '1p' | tr -d '\r')
+BODY_TRIMMED=$(printf '%s' "$HTTP_OUT" | awk 'BEGIN{last=""} {gsub("\r",""); if($0 ~ /[^[:space:]]/) last=$0} END{print last}')
+BODY_TRIMMED=$(echo -n "$BODY_TRIMMED" | sed -e 's/^[ \t\n\r]*//' -e 's/[ \t\n\r]*$//')
 
 if [[ "$STATUS_LINE" != *"200"* ]]; then
   echo "Integration test failed: expected status 200, got:" >&2
   echo "$STATUS_LINE" >&2
+  docker logs "$CONTAINER_ID" >&2 || true
   exit 1
 fi
 
 # Check Content-Type header
-if ! echo "$HTTP_OUT" | rg -i "^Content-Type: text/plain" >/dev/null 2>&1; then
+if ! printf '%s' "$HTTP_OUT" | grep -i -E "^Content-Type: text/plain" >/dev/null 2>&1; then
   echo "Integration test failed: expected 'Content-Type: text/plain' header" >&2
   echo "$HTTP_OUT" >&2
+  docker logs "$CONTAINER_ID" >&2 || true
   exit 1
 fi
-
-# Trim whitespace from body
-BODY_TRIMMED=$(echo -n "$BODY" | sed -e 's/^[ \t\n\r]*//' -e 's/[ \t\n\r]*$//')
 
 if [[ "$BODY_TRIMMED" != "Hello World" ]]; then
   echo "Integration test failed: expected body 'Hello World' got:" >&2
   echo "$BODY_TRIMMED" >&2
+  docker logs "$CONTAINER_ID" >&2 || true
   exit 1
 fi
 

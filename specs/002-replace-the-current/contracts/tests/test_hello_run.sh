@@ -11,24 +11,44 @@ if ! docker image inspect "$IMAGE" >/dev/null 2>&1; then
   docker build -t "$IMAGE" -f Dockerfile .
 fi
 
-# Run the container in background and forward port
-CONTAINER_ID=$(docker run -d -p ${PORT}:${PORT} -v "$PWD":$WORKDIR -w $WORKDIR $IMAGE sh -c "cargo run --quiet")
-trap 'docker rm -f $CONTAINER_ID >/dev/null 2>&1 || true' EXIT
-
-# Wait a moment for the server to start
-sleep 1
-
-# Perform the request
-HTTP_OUT=$(docker run --rm --network host curlimages/curl:8.4.0 -sS -D - "http://host.docker.internal:${PORT}/" || true)
-
-# Fallback for systems where host.docker.internal is not available
-if [[ -z "$HTTP_OUT" ]]; then
-  HTTP_OUT=$(curl -sS -D - "http://localhost:${PORT}/" || true)
-fi
+# Run the server and test inside a single container so it stops automatically
+# This avoids host port binding conflicts by testing against localhost inside the container.
+HTTP_OUT=$(docker run --rm -e PORT=${PORT} -v "$PWD":$WORKDIR -w $WORKDIR $IMAGE bash -lc '
+  set -euo pipefail
+  # ensure cargo is on PATH
+  export PATH=/usr/local/cargo/bin:$PATH
+  # install curl quietly if missing
+  if ! command -v curl >/dev/null 2>&1; then apt-get update >/dev/null 2>&1 && apt-get install -y --no-install-recommends curl >/dev/null 2>&1; fi
+  # start server in background and capture logs
+  /usr/local/cargo/bin/cargo run --quiet > /tmp/server.log 2>&1 &
+  server_pid=$!
+  # try requests until we get a response or timeout
+  max_attempts=30
+  attempt=0
+  while [ $attempt -lt $max_attempts ]; do
+    if curl -sS --max-time 2 -D /tmp/http_headers -o /tmp/http_body "http://127.0.0.1:${PORT}/"; then
+      break
+    fi
+    attempt=$((attempt+1))
+    sleep 1
+  done
+  # print headers then body to stdout for host parsing
+  if [ -f /tmp/http_headers ]; then cat /tmp/http_headers; fi
+  if [ -f /tmp/http_body ]; then cat /tmp/http_body; fi
+  # if we failed to get HTTP output, dump server log to stderr for debugging
+  if [ ! -s /tmp/http_body ]; then echo "=== server.log ===" >&2; cat /tmp/server.log >&2 || true; fi
+  # stop the server before exiting the container
+  kill "$server_pid" >/dev/null 2>&1 || true
+  wait "$server_pid" 2>/dev/null || true
+' || true)
 
 # Check status code and headers and body
-STATUS_LINE=$(echo "$HTTP_OUT" | sed -n '1p' | tr -d '\r')
-BODY=$(echo "$HTTP_OUT" | sed -n '2,$p' | tr -d '\r')
+STATUS_LINE=$(printf '%s' "$HTTP_OUT" | sed -n '1p' | tr -d '\r')
+
+# Determine body as the last non-empty line of the response (robust against headers)
+BODY_TRIMMED=$(printf '%s' "$HTTP_OUT" | awk 'BEGIN{last=""} {gsub("\r",""); if($0 ~ /[^[:space:]]/) last=$0} END{print last}')
+# Trim whitespace
+BODY_TRIMMED=$(echo -n "$BODY_TRIMMED" | sed -e 's/^[ \t\n\r]*//' -e 's/[ \t\n\r]*$//')
 
 if [[ "$STATUS_LINE" != *"200"* ]]; then
   echo "Contract test failed: expected status 200, got:" >&2
@@ -36,15 +56,12 @@ if [[ "$STATUS_LINE" != *"200"* ]]; then
   exit 1
 fi
 
-# Check Content-Type header
-if ! echo "$HTTP_OUT" | rg -i "^Content-Type: text/plain" >/dev/null 2>&1; then
+# Check Content-Type header (use grep for portability)
+if ! echo "$HTTP_OUT" | grep -i -E "^Content-Type: text/plain" >/dev/null 2>&1; then
   echo "Contract test failed: expected 'Content-Type: text/plain' header" >&2
   echo "$HTTP_OUT" >&2
   exit 1
 fi
-
-# Trim whitespace from body
-BODY_TRIMMED=$(echo -n "$BODY" | sed -e 's/^[ \t\n\r]*//' -e 's/[ \t\n\r]*$//')
 
 if [[ "$BODY_TRIMMED" != "Hello World" ]]; then
   echo "Contract test failed: expected body 'Hello World' got:" >&2
