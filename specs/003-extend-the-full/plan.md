@@ -190,12 +190,7 @@ ios/ or android/
 **Phase 5**: Validation (run tests, execute quickstart.md, performance validation)
 
 ## Complexity Tracking
-*Fill ONLY if Constitution Check has violations that must be justified*
-
-| Violation | Why Needed | Simpler Alternative Rejected Because |
-|-----------|------------|-------------------------------------|
-| [e.g., 4th project] | [current need] | [why 3 projects insufficient] |
-| [e.g., Repository pattern] | [specific problem] | [why direct DB access insufficient] |
+*No constitution violations detected during initial checks. The plan follows the Host Runtime Rule by executing build and tests inside the dev container and places tests under `tests/` per the Test Location & Naming Rule.*
 
 
 ## Progress Tracking
@@ -211,9 +206,9 @@ ios/ or android/
 
 **Gate Status**:
 - [x] Initial Constitution Check: PASS
-- [ ] Post-Design Constitution Check: PASS
+- [x] Post-Design Constitution Check: PASS
 - [x] All NEEDS CLARIFICATION resolved
-- [ ] Complexity deviations documented
+- [x] Complexity deviations documented
 
 ---
 *Based on Constitution v2.1.1 - See `/memory/constitution.md`*
